@@ -1,5 +1,6 @@
 import React from "react";
-import LoginButton from "../ui/loginButton";
+import Button from "../ui/Button";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -14,7 +15,31 @@ export default function Home() {
           justifyContent: "center",
         }}
       >
-        <LoginButton />
+        <h1
+          style={{
+            position: "absolute",
+            width: "246px",
+            height: "84px",
+            left: "91px",
+            top: "499px",
+            fontFamily: "Avenir Next",
+            fontStyle: "normal",
+            fontWeight: 700,
+            fontSize: "28px",
+            lineHeight: "38px",
+            textAlign: "center",
+            color: "#FFFFFF",
+          }}
+        >
+          Millions of Songs. Free on Spotify.
+        </h1>
+
+        <Button type="green" style={{ top: "605px" }}>
+          {/* <Link>
+          
+          </Link> */}
+        </Button>
+        <Button type="default" style={{ top: "666px" }}></Button>
       </div>
     </main>
   );
