@@ -1,20 +1,12 @@
 import React from "react";
 import Button from "../ui/Button";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <div
-        style={{
-          width: "428px",
-          height: "926px",
-          backgroundColor: "#121212",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+    <main>
+      <div>
         <h1
           style={{
             position: "absolute",
@@ -33,6 +25,18 @@ export default function Home() {
         >
           Millions of Songs. Free on Spotify.
         </h1>
+        <Image
+          src="/spotify_icon_white.svg"
+          alt="Spotify Icon"
+          layout="fixed"
+          width={53}
+          height={53}
+          style={{
+            position: "absolute",
+            left: 188,
+            top: 436,
+          }}
+        />
 
         <Button type="green" style={{ top: "605px" }}>
           {/* <Link>
