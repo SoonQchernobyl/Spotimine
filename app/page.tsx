@@ -3,29 +3,25 @@ import Button from "../ui/Button";
 import { Heading } from "../ui/text";
 import Image from "next/image";
 import Link from "next/link";
+import SpotifyLoginButton from "./api/spotifyLogin";
 
 export default function Home() {
   return (
     <main>
       <div>
-        {/* <h1
+        <Image
+          src="/bg.svg"
+          layout="fixed"
+          width={428}
+          height={465}
+          alt="Background"
           style={{
             position: "absolute",
-            width: "246px",
-            height: "84px",
-            left: "91px",
-            top: "499px",
-            fontFamily: "Avenir Next",
-            fontStyle: "normal",
-            fontWeight: 700,
-            fontSize: "28px",
-            lineHeight: "38px",
-            textAlign: "center",
-            color: "#FFFFFF",
+            left: 8,
+            top: 15,
           }}
-        >
-          Millions of Songs. Free on Spotify.
-        </h1> */}
+        ></Image>
+
         <Heading
           style={{
             position: "absolute",
@@ -35,10 +31,10 @@ export default function Home() {
             top: "499px",
           }}
         >
-          Millions of Songs. Free on Spotify.
+          Find your perfect Song on Spotify.
         </Heading>
 
-        <Image
+        {/* <Image
           src="/spotify_icon_white.svg"
           alt="Spotify Icon"
           layout="fixed"
@@ -49,38 +45,87 @@ export default function Home() {
             left: 188,
             top: 436,
           }}
-        />
+        /> */}
 
-        <Button type="green" style={{ top: "605px" }}>
-          {/* <Link>
-          </Link>  링크 들어갈 곳*/}
-        </Button>
-        <Button type="default" style={{ top: "666px" }}>
-          <Heading>Continue with Google</Heading>
-        </Button>
-        <Button type="default" style={{ top: "727px" }}>
-          <Heading></Heading>
-        </Button>
-        <Button type="default" style={{ top: "788px" }}>
-          <Heading></Heading>
-        </Button>
+        <Button type="green" style={{ top: "605px" }}></Button>
+        <SpotifyLoginButton />
+        <Button type="default" style={{ top: "666px" }}></Button>
+        <Image
+          src="/google_icon.svg"
+          alt="Spotify Icon"
+          layout="fixed"
+          width={18}
+          height={18}
+          style={{
+            position: "absolute",
+            left: "62px",
+            top: "681px",
+          }}
+        />
+        <Heading
+          style={{
+            width: "171px",
+            height: "23px",
+            left: "129px",
+            top: "669px",
+            fontSize: "16px",
+            lineHeight: "22px",
+          }}
+        >
+          Continue with Google
+        </Heading>
+
+        <Button type="default" style={{ top: "727px" }}></Button>
+        <Image
+          src="/facebook_icon.svg"
+          alt="Spotify Icon"
+          layout="fixed"
+          width={18}
+          height={18}
+          style={{
+            position: "absolute",
+            left: "62px",
+            top: "742px",
+          }}
+        />
+        <Heading
+          style={{
+            width: "191px",
+            height: "23px",
+            left: "129px",
+            top: "730px",
+            fontSize: "16px",
+            lineHeight: "22px",
+          }}
+        >
+          Continue with Facebook
+        </Heading>
+        <Button type="default" style={{ top: "788px" }}></Button>
+        <Image
+          src="/apple_icon.svg"
+          alt="Spotify Icon"
+          layout="fixed"
+          width={18}
+          height={18}
+          style={{
+            position: "absolute",
+            left: "62px",
+            top: "803px",
+          }}
+        />
+        <Heading
+          style={{
+            width: "171px",
+            height: "23px",
+            left: "127px",
+            top: "791px",
+            fontSize: "16px",
+            lineHeight: "22px",
+          }}
+        >
+          Continue with Apple
+        </Heading>
       </div>
     </main>
   );
 }
-
-// /* Continue with Google */
-
-// position: absolute;
-// width: 171px;
-// height: 23px;
-// left: 129px;
-// top: 679px;
-
-// font-family: 'Avenir Next';
-// font-style: normal;
-// font-weight: 700;
-// font-size: 16px;
-// line-height: 22px;
-
-// color: #F5F5F5;
