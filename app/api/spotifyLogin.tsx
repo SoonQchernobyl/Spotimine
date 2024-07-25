@@ -1,14 +1,11 @@
 "use client";
 
+import { signIn } from "next-auth/react";
 import { Heading } from "../../ui/text";
 
 function SpotifyLoginButton() {
   const handleSpotifyLogin = () => {
-    const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
-    const redirectUri = encodeURIComponent("http://localhost:3000/api/callback");
-    const scopes = encodeURIComponent("user-read-private user-read-email"); // 필요한 권한
-    const spotifyUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scopes}`;
-    window.location.href = spotifyUrl;
+    signIn("spotify", { callbackUrl: "/top5" });
   };
 
   return (
