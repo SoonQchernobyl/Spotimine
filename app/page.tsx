@@ -1,11 +1,32 @@
+"use client";
+
 import React from "react";
 import Button from "../ui/Button";
 import { Heading } from "../ui/text";
-import Image from "next/image";
-import Link from "next/link";
 import SpotifyLoginButton from "./api/spotifyLogin";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { fetchAndSaveTracks } from "../utils/spotifyApi";
 
 export default function Home() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  const handleLogin = async () => {
+    if (status === "authenticated" && session?.accessToken) {
+      try {
+        console.log("fetchAndSaveTracks 호출 전");
+        await fetchAndSaveTracks();
+        console.log("fetchAndSaveTracks 호출 후");
+        router.push("/top5");
+      } catch (error) {
+        console.error("트랙 데이터 가져오기 실패:", error);
+        // 에러 처리 로직 (예: 사용자에게 알림)
+      }
+    }
+  };
+
   return (
     <main>
       <div>
@@ -21,6 +42,15 @@ export default function Home() {
             top: 15,
           }}
         ></Image>
+        <button
+          onClick={() => {
+            console.log("로그인 버튼 클릭됨");
+            handleLogin();
+          }}
+        >
+          {" "}
+          ㅁㄴㅇㅁㄴㅇ
+        </button>
 
         <Heading
           style={{
@@ -48,7 +78,7 @@ export default function Home() {
         /> */}
 
         <Button type="green" style={{ top: "605px" }}></Button>
-        <SpotifyLoginButton />
+        <SpotifyLoginButton onLogin={handleLogin} />
         <Button type="default" style={{ top: "666px" }}></Button>
         <Image
           src="/google_icon.svg"

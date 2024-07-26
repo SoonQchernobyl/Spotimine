@@ -8,7 +8,7 @@ const handler = NextAuth({
       clientSecret: process.env.SPOTIFY_CLIENT_SECRET as string,
       authorization: {
         params: {
-          scope: "user-top-read user-read-email user-read-private",
+          scope: "user-top-read user-read-email user-read-private user-library-read",
         },
       },
     }),
@@ -24,6 +24,9 @@ const handler = NextAuth({
       session.accessToken = token.accessToken;
       return session;
     },
+  },
+  pages: {
+    signIn: '/auth/signin',
   },
 });
 
