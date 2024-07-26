@@ -15,17 +15,26 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
-
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  margin: 0;
+  padding: 0;
+  color: white;
+  font-family: "Helvetica Neue", Arial, sans-serif;
 }
 
+.app-container {
+  width: 428px;
+  height: 926px;
+  margin: 0 auto;
+  background-color: #121212;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* 스크롤바 스타일링 (선택적) */
+.app-container::-webkit-scrollbar {
+  width: 0px;
+}
 @layer utilities {
   .text-balance {
     text-wrap: balance;
