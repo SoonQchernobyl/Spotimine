@@ -2,23 +2,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  height: 100%;
   padding: 20px;
-  position: relative;
-}
-
-.albumCover {
-  width: 300px;
-  height: 300px;
-  margin-bottom: 20px;
-}
-
-.albumCover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 10px;
+  background-color: #121212;
+  color: white;
 }
 
 .trackInfo {
@@ -29,7 +15,7 @@
 .trackName {
   font-size: 24px;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
 .artistName {
@@ -37,10 +23,42 @@
   color: #b3b3b3;
 }
 
+.playlistButtons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.playlistButtons button {
+  padding: 10px 15px;
+  background-color: #1db954;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.playlistButtons button:hover {
+  background-color: #1ed760;
+}
+
+.playlistButtons button:disabled {
+  background-color: #535353;
+  cursor: not-allowed;
+}
+
 .spotifyEmbed {
-  position: absolute;
-  bottom: 0;
-  left: 0;
   width: 100%;
-  height: 80px;
+  height: 380px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 380px;
+  font-size: 18px;
 }
