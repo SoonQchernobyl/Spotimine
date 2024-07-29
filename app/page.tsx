@@ -38,19 +38,10 @@ export default function Home() {
           alt="Background"
           style={{
             position: "absolute",
-            left: 8,
-            top: 15,
+            left: 0,
+            top: 0,
           }}
         ></Image>
-        <button
-          onClick={() => {
-            console.log("로그인 버튼 클릭됨");
-            handleLogin();
-          }}
-        >
-          {" "}
-          ㅁㄴㅇㅁㄴㅇ
-        </button>
 
         <Heading
           style={{
@@ -58,27 +49,14 @@ export default function Home() {
             width: "246px",
             height: "84px",
             left: "91px",
-            top: "499px",
+            top: "509px",
           }}
         >
           Find your perfect Song on Spotify.
         </Heading>
 
-        {/* <Image
-          src="/spotify_icon_white.svg"
-          alt="Spotify Icon"
-          layout="fixed"
-          width={53}
-          height={53}
-          style={{
-            position: "absolute",
-            left: 188,
-            top: 436,
-          }}
-        /> */}
-
         <Button type="green" style={{ top: "605px" }}></Button>
-        <SpotifyLoginButton onLogin={handleLogin} />
+        <SpotifyLoginButton />
         <Button type="default" style={{ top: "666px" }}></Button>
         <Image
           src="/google_icon.svg"
@@ -97,7 +75,7 @@ export default function Home() {
             width: "171px",
             height: "23px",
             left: "129px",
-            top: "669px",
+            top: "679px",
             fontSize: "16px",
             lineHeight: "22px",
           }}
@@ -123,7 +101,7 @@ export default function Home() {
             width: "191px",
             height: "23px",
             left: "129px",
-            top: "730px",
+            top: "740px",
             fontSize: "16px",
             lineHeight: "22px",
           }}
@@ -148,7 +126,7 @@ export default function Home() {
             width: "171px",
             height: "23px",
             left: "127px",
-            top: "791px",
+            top: "801px",
             fontSize: "16px",
             lineHeight: "22px",
           }}

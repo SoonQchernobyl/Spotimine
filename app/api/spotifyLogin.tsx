@@ -1,20 +1,40 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Heading } from "../../ui/text";
+import { fetchAndSaveTracks } from "../../utils/spotifyApi";
+import { useEffect } from "react";
 
-interface SpotifyLoginButtonProps {
-  onLogin?: () => void;
-}
+function SpotifyLoginButton() {
+  const { data: session, status, update } = useSession();
+  const router = useRouter();
 
-function SpotifyLoginButton({ onLogin }: SpotifyLoginButtonProps) {
+  useEffect(() => {
+    if (session?.error === "RefreshAccessTokenError") {
+      signIn("spotify"); // Force sign in to hopefully resolve error
+    }
+  }, [session]);
+
   const handleSpotifyLogin = async () => {
-    await signIn("spotify", { callbackUrl: "/top5" });
-    if (onLogin) {
-      onLogin();
+    if (status === "unauthenticated") {
+      await signIn("spotify", { callbackUrl: "/top5" });
+    } else if (status === "authenticated" && session?.accessToken) {
+      try {
+        console.log("fetchAndSaveTracks 호출 전");
+        await fetchAndSaveTracks();
+        console.log("fetchAndSaveTracks 호출 후");
+        router.push("/top5");
+      } catch (error) {
+        console.error("트랙 데이터 가져오기 실패:", error);
+        if (error.message.includes("The access token expired")) {
+          await update(); // Force session update to get a new access token
+          handleSpotifyLogin(); // Retry after updating the session
+        }
+      }
     }
   };
-
+  
   return (
     <div onClick={handleSpotifyLogin}>
       <Heading
@@ -22,7 +42,7 @@ function SpotifyLoginButton({ onLogin }: SpotifyLoginButtonProps) {
           width: "150px",
           height: "23px",
           left: "140px",
-          top: "608px",
+          top: "618px",
           fontSize: "16px",
           lineHeight: "22px",
           color: "black",

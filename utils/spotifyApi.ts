@@ -1,5 +1,42 @@
 import { getSession } from "next-auth/react";
 
+async function fetchAudioFeatures(trackIds: string[], accessToken: string) {
+  const batchSize = 100;
+  let allAudioFeatures = [];
+
+  for (let i = 0; i < trackIds.length; i += batchSize) {
+    const batch = trackIds.slice(i, i + batchSize);
+    console.log(
+      `오디오 특성 가져오기: ${i + 1}에서 ${i + batch.length}까지의 트랙`
+    );
+    const response = await fetch(
+      `https://api.spotify.com/v1/audio-features?ids=${batch.join(",")}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(
+        `오디오 특성 가져오기 실패. 상태 코드: ${response.status}, 에러: ${errorText}`
+      );
+      throw new Error(
+        `오디오 특성을 가져오는 데 실패했습니다. 상태 코드: ${response.status}`
+      );
+    }
+
+    const data = await response.json();
+    console.log(`가져온 오디오 특성 수: ${data.audio_features.length}`);
+    allAudioFeatures = [...allAudioFeatures, ...(data.audio_features || [])];
+  }
+
+  console.log(`총 ${allAudioFeatures.length}개의 오디오 특성을 가져왔습니다.`);
+  return allAudioFeatures;
+}
+
 export async function fetchAndSaveTracks() {
   console.log("fetchAndSaveTracks 시작");
   const session = await getSession();
@@ -29,14 +66,18 @@ export async function fetchAndSaveTracks() {
       console.log(`Spotify API 응답 상태: ${response.status}`);
 
       if (!response.ok) {
-        console.error(
-          `트랙 데이터 가져오기 실패. 상태 코드: ${response.status}`
-        );
-        const errorText = await response.text();
-        console.error(`에러 내용: ${errorText}`);
-        throw new Error(
-          `트랙 데이터를 가져오는 데 실패했습니다. 상태 코드: ${response.status}`
-        );
+        if (response.status === 401) {
+          throw new Error("The access token expired");
+        }
+        throw new Error(`API 요청 실패: ${response.status}`);
+        // console.error(
+        //   `트랙 데이터 가져오기 실패. 상태 코드: ${response.status}`
+        // );
+        // const errorText = await response.text();
+        // console.error(`에러 내용: ${errorText}`);
+        // throw new Error(
+        //   `트랙 데이터를 가져오는 데 실패했습니다. 상태 코드: ${response.status}`
+        // );
       }
 
       const data = await response.json();

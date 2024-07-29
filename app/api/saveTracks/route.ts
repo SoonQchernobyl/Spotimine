@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth/[...nextauth]/route";
 
 const prisma = new PrismaClient();
 
@@ -7,13 +9,28 @@ export async function POST(request: Request) {
   console.log('POST 요청 받음: /api/saveTracks');
   
   try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json({ error: '인증되지 않은 사용자입니다.' }, { status: 401 });
+    }
+
     const { tracks } = await request.json();
     console.log(`받은 트랙 수: ${tracks.length}`);
+
+    // 사용자 정보 저장 또는 업데이트
+    const user = await prisma.user.upsert({
+      where: { email: session.user.email },
+      update: {},
+      create: {
+        email: session.user.email,
+        spotifyId: session.user.id || '',  // Spotify ID가 없을 경우 빈 문자열 사용
+      },
+    });
 
     let savedCount = 0;
     for (const track of tracks) {
       try {
-        await prisma.track.upsert({
+        const savedTrack = await prisma.track.upsert({
           where: { spotifyId: track.id },
           update: {
             name: track.name,
@@ -51,6 +68,23 @@ export async function POST(request: Request) {
             },
           },
         });
+
+        // UserSavedTrack 생성 또는 업데이트
+        await prisma.userSavedTrack.upsert({
+          where: {
+            userId_trackId: {
+              userId: user.id,
+              trackId: savedTrack.id,
+            },
+          },
+          update: {},
+          create: {
+            userId: user.id,
+            trackId: savedTrack.id,
+            addedAt: new Date(),  // 현재 시간을 저장
+          },
+        });
+
         savedCount++;
       } catch (error) {
         console.error(`트랙 저장 중 오류 발생 (ID: ${track.id}):`, error);

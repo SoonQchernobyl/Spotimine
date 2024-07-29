@@ -15,7 +15,7 @@ datasource db {
 
 model User {
   id         Int               @id @default(autoincrement())
-  spotifyId  String            @unique
+  spotifyId  String?            @unique
   email      String            @unique
   savedTracks UserSavedTrack[]
 }
@@ -26,9 +26,6 @@ model Track {
   name          String
   artist        String
   album         String
-  durationMs    Int
-  popularity    Int
-  previewUrl    String?
   audioFeatures AudioFeatures?
   savedByUsers  UserSavedTrack[]
 }
