@@ -25,6 +25,7 @@ export default async function StreamPage({ searchParams }) {
       key={trackId}
       initialTrackData={trackData}
       trackId={trackId}
+      selectedFeature={searchParams.feature || "tempo"} // 기본값 설정
     />
   );
 }
