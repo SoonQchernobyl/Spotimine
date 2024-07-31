@@ -1,4 +1,7 @@
 import { getSession } from "next-auth/react";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 async function fetchWebApi(endpoint: string, method: string, body?: any) {
   const session = await getSession();
@@ -50,22 +53,41 @@ export async function createPlaylist(trackIds: string[], playlistName: string) {
 
 export async function getTopTracksForFeature(
   feature: string,
-  limit: number = 20
+  limit: number = 20,
+  selectedTrackId: string
 ) {
-  const response = await fetchWebApi("v1/me/top/tracks?limit=50", "GET");
-  const tracks = response.items;
-
-  const audioFeatures = await fetchWebApi(
-    `v1/audio-features?ids=${tracks.map((t) => t.id).join(",")}`,
-    "GET"
+  console.log(
+    `Getting top tracks for feature: ${feature}, limit: ${limit}, selectedTrackId: ${selectedTrackId}`
   );
 
-  const tracksWithFeatures = tracks.map((track, index) => ({
-    ...track,
-    audio_features: audioFeatures.audio_features[index],
-  }));
+  // 선택된 트랙 정보 가져오기
+  const selectedTrack = await fetchWebApi(
+    `v1/tracks/${selectedTrackId}`,
+    "GET"
+  );
+  console.log("Selected track:", selectedTrack);
 
-  return tracksWithFeatures
-    .sort((a, b) => b.audio_features[feature] - a.audio_features[feature])
-    .slice(0, limit);
+  // API를 통해 DB에서 트랙 가져오기
+  const response = await fetch(
+    `/api/getTopTracks?feature=${feature}&limit=${limit}`
+  );
+  const dbTracks = await response.json();
+  console.log("Tracks from DB:", dbTracks);
+
+  // 최종 트랙 리스트 생성
+  const finalTracks = [
+    selectedTrack,
+    ...dbTracks
+      .filter((t) => t.spotifyId !== selectedTrackId)
+      .map((t) => ({
+        id: t.spotifyId,
+        name: t.name,
+        artists: [{ name: t.artist }],
+        audio_features: t.audioFeatures,
+      })),
+  ].slice(0, limit);
+
+  console.log("Final tracks list:", finalTracks);
+
+  return finalTracks;
 }

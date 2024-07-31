@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import {
-  createPlaylist,
   getTopTracksForFeature,
+  createPlaylist,
 } from "../../utils/spotifyPlaylistUtils";
 
 const validFeatures = ["tempo", "speechiness", "valence", "acousticness"];
@@ -14,65 +14,16 @@ export default function StreamComponent({
   trackId,
   selectedFeature = "tempo",
 }) {
-  const embedRef = useRef<HTMLDivElement>(null);
-  const [tempPlaylist, setTempPlaylist] = useState(null);
+  const [playlist, setPlaylist] = useState(null);
   const [playlistTracks, setPlaylistTracks] = useState([]);
-  const [isCreatingPlaylist, setIsCreatingPlaylist] = useState(false);
+  const [isCreatingPlaylist, setIsCreatingPlaylist] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isEmbedReady, setIsEmbedReady] = useState(false);
-  const [spotifyController, setSpotifyController] = useState(null);
 
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://open.spotify.com/embed/iframe-api/v1";
-    script.async = true;
-    document.body.appendChild(script);
+    createSpotifyPlaylist();
+  }, [selectedFeature, trackId]);
 
-    script.onload = () => {
-      if (window.Spotify) {
-        setIsEmbedReady(true);
-      } else {
-        window.onSpotifyIframeApiReady = () => {
-          setIsEmbedReady(true);
-        };
-      }
-    };
-
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (isEmbedReady && embedRef.current && window.Spotify) {
-      const initializeEmbed = () => {
-        window.Spotify.createController(
-          embedRef.current,
-          {
-            width: "100%",
-            height: "380",
-            uri: tempPlaylist
-              ? `spotify:playlist:${tempPlaylist.id}`
-              : `spotify:track:${trackId}`,
-          },
-          (controller) => {
-            setSpotifyController(controller);
-            console.log("Spotify Embed initialized");
-          }
-        );
-      };
-
-      initializeEmbed();
-    }
-  }, [isEmbedReady, trackId, tempPlaylist]);
-
-  useEffect(() => {
-    if (isEmbedReady) {
-      createTempPlaylist();
-    }
-  }, [isEmbedReady, selectedFeature]);
-
-  const createTempPlaylist = async () => {
+  const createSpotifyPlaylist = async () => {
     setIsCreatingPlaylist(true);
     setError(null);
     try {
@@ -80,30 +31,27 @@ export default function StreamComponent({
         throw new Error(`Invalid feature: ${selectedFeature}`);
       }
 
-      const topTracks = await getTopTracksForFeature(selectedFeature, 10);
-      const newPlaylist = await createPlaylist(
-        topTracks.map((t) => t.id),
-        `Top ${
-          selectedFeature.charAt(0).toUpperCase() + selectedFeature.slice(1)
-        } Tracks (Temporary)`
+      const topTracks = await getTopTracksForFeature(
+        selectedFeature,
+        20,
+        trackId
       );
-      setTempPlaylist(newPlaylist);
       setPlaylistTracks(topTracks);
 
-      if (spotifyController) {
-        spotifyController.loadUri(`spotify:playlist:${newPlaylist.id}`);
-      }
+      const playlistName = `Top 20 ${
+        selectedFeature.charAt(0).toUpperCase() + selectedFeature.slice(1)
+      } Tracks`;
+      const newPlaylist = await createPlaylist(
+        topTracks.map((t) => t.id),
+        playlistName
+      );
+      setPlaylist(newPlaylist);
     } catch (error) {
-      console.error("Error creating temporary playlist:", error);
-      setError(error.message || "Failed to create temporary playlist");
+      console.error("Error creating Spotify playlist:", error);
+      setError(error.message || "Failed to create Spotify playlist");
     } finally {
       setIsCreatingPlaylist(false);
     }
-  };
-
-  const handleAddToSpotify = async () => {
-    console.log("Adding playlist to Spotify:", tempPlaylist.id);
-    // Implement the logic to save the playlist to the user's Spotify account
   };
 
   return (
@@ -115,13 +63,12 @@ export default function StreamComponent({
         </p>
       </div>
       {isCreatingPlaylist ? (
-        <p>Creating temporary playlist...</p>
+        <p>Creating Spotify playlist...</p>
       ) : error ? (
         <p className={styles.error}>{error}</p>
-      ) : tempPlaylist ? (
+      ) : playlist ? (
         <div>
-          <h2>Temporary Playlist: {tempPlaylist.name}</h2>
-          <button onClick={handleAddToSpotify}>Add to My Spotify</button>
+          <h2>{playlist.name}</h2>
           <ul className={styles.trackList}>
             {playlistTracks.map((track, index) => (
               <li key={track.id}>
@@ -129,9 +76,18 @@ export default function StreamComponent({
               </li>
             ))}
           </ul>
+          <iframe
+            title={`Spotify Embed: ${playlist.name}`}
+            src={`https://open.spotify.com/embed/playlist/${playlist.id}?utm_source=generator&theme=0`}
+            width="100%"
+            height="380"
+            style={{ minHeight: "360px" }}
+            frameBorder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+          />
         </div>
       ) : null}
-      <div ref={embedRef} className={styles.spotifyEmbed}></div>
     </div>
   );
 }

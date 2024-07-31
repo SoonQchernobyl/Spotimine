@@ -10,7 +10,7 @@ interface Track {
   id: string;
   name: string;
   artists: { name: string }[];
-  album: { 
+  album: {
     name: string;
     images: { url: string }[];
   };
@@ -22,11 +22,11 @@ interface Track {
   };
 }
 
-const characteristicTitles = [
-  "Most High Tempo",
-  "Most Talkative",
-  "Most Positive",
-  "Most Acoustic"
+const characteristicMap = [
+  { title: "Most High Tempo", feature: "tempo" },
+  { title: "Most Talkative", feature: "speechiness" },
+  { title: "Most Positive", feature: "valence" },
+  { title: "Most Acoustic", feature: "acousticness" },
 ];
 
 export default function Top5() {
@@ -35,7 +35,9 @@ export default function Top5() {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchAllSavedTracks = async (accessToken: string): Promise<Track[]> => {
+    const fetchAllSavedTracks = async (
+      accessToken: string
+    ): Promise<Track[]> => {
       let allTracks: Track[] = [];
       let nextUrl = "https://api.spotify.com/v1/me/tracks?limit=50";
 
@@ -44,17 +46,26 @@ export default function Top5() {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
         const data = await response.json();
-        allTracks = [...allTracks, ...data.items.map((item: any) => item.track)];
+        allTracks = [
+          ...allTracks,
+          ...data.items.map((item: any) => item.track),
+        ];
         nextUrl = data.next;
       }
 
       return allTracks;
     };
 
-    const fetchAudioFeatures = async (trackIds: string[], accessToken: string) => {
-      const response = await fetch(`https://api.spotify.com/v1/audio-features?ids=${trackIds.join(',')}`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+    const fetchAudioFeatures = async (
+      trackIds: string[],
+      accessToken: string
+    ) => {
+      const response = await fetch(
+        `https://api.spotify.com/v1/audio-features?ids=${trackIds.join(",")}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
       return await response.json();
     };
 
@@ -62,19 +73,22 @@ export default function Top5() {
       if (status === "authenticated" && session?.accessToken) {
         try {
           // 로컬 스토리지에서 캐시된 데이터 확인
-          const cachedData = localStorage.getItem('distinctTracks');
+          const cachedData = localStorage.getItem("distinctTracks");
           if (cachedData) {
             setDistinctTracks(JSON.parse(cachedData));
             return;
           }
 
           const savedTracks = await fetchAllSavedTracks(session.accessToken);
-          
+
           // 50개씩 나누어 오디오 특성 가져오기
           const audioFeatures = [];
           for (let i = 0; i < savedTracks.length; i += 50) {
             const chunk = savedTracks.slice(i, i + 50);
-            const chunkFeatures = await fetchAudioFeatures(chunk.map(track => track.id), session.accessToken);
+            const chunkFeatures = await fetchAudioFeatures(
+              chunk.map((track) => track.id),
+              session.accessToken
+            );
             audioFeatures.push(...chunkFeatures.audio_features);
           }
 
@@ -83,24 +97,46 @@ export default function Top5() {
             audio_features: audioFeatures[index],
           }));
 
-          const highestTempo = tracksWithFeatures.reduce((prev, current) => 
-            (prev.audio_features?.tempo ?? 0) > (current.audio_features?.tempo ?? 0) ? prev : current
+          const highestTempo = tracksWithFeatures.reduce((prev, current) =>
+            (prev.audio_features?.tempo ?? 0) >
+            (current.audio_features?.tempo ?? 0)
+              ? prev
+              : current
           );
-          const highestSpeechiness = tracksWithFeatures.reduce((prev, current) => 
-            (prev.audio_features?.speechiness ?? 0) > (current.audio_features?.speechiness ?? 0) ? prev : current
+          const highestSpeechiness = tracksWithFeatures.reduce(
+            (prev, current) =>
+              (prev.audio_features?.speechiness ?? 0) >
+              (current.audio_features?.speechiness ?? 0)
+                ? prev
+                : current
           );
-          const highestValence = tracksWithFeatures.reduce((prev, current) => 
-            (prev.audio_features?.valence ?? 0) > (current.audio_features?.valence ?? 0) ? prev : current
+          const highestValence = tracksWithFeatures.reduce((prev, current) =>
+            (prev.audio_features?.valence ?? 0) >
+            (current.audio_features?.valence ?? 0)
+              ? prev
+              : current
           );
-          const highestAcousticness = tracksWithFeatures.reduce((prev, current) => 
-            (prev.audio_features?.acousticness ?? 0) > (current.audio_features?.acousticness ?? 0) ? prev : current
+          const highestAcousticness = tracksWithFeatures.reduce(
+            (prev, current) =>
+              (prev.audio_features?.acousticness ?? 0) >
+              (current.audio_features?.acousticness ?? 0)
+                ? prev
+                : current
           );
 
-          const distinctTracks = [highestTempo, highestSpeechiness, highestValence, highestAcousticness];
+          const distinctTracks = [
+            highestTempo,
+            highestSpeechiness,
+            highestValence,
+            highestAcousticness,
+          ];
           setDistinctTracks(distinctTracks);
 
           // 결과를 로컬 스토리지에 캐싱
-          localStorage.setItem('distinctTracks', JSON.stringify(distinctTracks));
+          localStorage.setItem(
+            "distinctTracks",
+            JSON.stringify(distinctTracks)
+          );
         } catch (error) {
           console.error("트랙 데이터 가져오기 실패:", error);
         }
@@ -110,8 +146,8 @@ export default function Top5() {
     fetchDistinctTracks();
   }, [session, status]);
 
-  const handleTrackClick = (trackId: string) => {
-    router.push(`/stream?trackId=${trackId}`);
+  const handleTrackClick = (trackId: string, feature: string) => {
+    router.push(`/stream?trackId=${trackId}&feature=${feature}`);
   };
 
   if (status === "loading") {
@@ -123,7 +159,6 @@ export default function Top5() {
       <div className={styles.error}>Please sign in to view your top tracks</div>
     );
   }
-
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Your Distinct Tracks</h1>
@@ -131,9 +166,11 @@ export default function Top5() {
         <div
           key={track.id}
           className={styles.trackContainer}
-          onClick={() => handleTrackClick(track.id)}
+          onClick={() =>
+            handleTrackClick(track.id, characteristicMap[index].feature)
+          }
         >
-          <h2 className={styles.subtitle}>{characteristicTitles[index]}</h2>
+          <h2 className={styles.subtitle}>{characteristicMap[index].title}</h2>
           <div className={styles.trackContent}>
             <div className={styles.albumCover}>
               {track.album.images[0] && (

@@ -1,3 +1,5 @@
+// /app/stream/page.tsx
+
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import StreamComponent from "./StreamComponent";
@@ -5,6 +7,7 @@ import StreamComponent from "./StreamComponent";
 export default async function StreamPage({ searchParams }) {
   const session = await getServerSession(authOptions);
   const trackId = searchParams.trackId;
+  const selectedFeature = searchParams.feature || "tempo";
 
   if (!session) {
     return <div>Please sign in to view this track</div>;
@@ -25,7 +28,7 @@ export default async function StreamPage({ searchParams }) {
       key={trackId}
       initialTrackData={trackData}
       trackId={trackId}
-      selectedFeature={searchParams.feature || "tempo"} // 기본값 설정
+      selectedFeature={selectedFeature}
     />
   );
 }
