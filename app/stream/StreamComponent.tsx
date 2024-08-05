@@ -69,13 +69,7 @@ export default function StreamComponent({
       ) : playlist ? (
         <div>
           <h2>{playlist.name}</h2>
-          <ul className={styles.trackList}>
-            {playlistTracks.map((track, index) => (
-              <li key={track.id}>
-                {index + 1}. {track.name} - {track.artists[0].name}
-              </li>
-            ))}
-          </ul>
+
           <iframe
             title={`Spotify Embed: ${playlist.name}`}
             src={`https://open.spotify.com/embed/playlist/${playlist.id}?utm_source=generator&theme=0`}

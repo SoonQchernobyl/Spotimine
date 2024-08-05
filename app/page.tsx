@@ -2,7 +2,7 @@
 
 import React from "react";
 import Button from "../ui/Button";
-import { Heading } from "../ui/text";
+import { Heading } from "../ui/Text";
 import SpotifyLoginButton from "./api/spotifyLogin";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
@@ -19,7 +19,7 @@ export default function Home() {
         console.log("fetchAndSaveTracks 호출 전");
         await fetchAndSaveTracks();
         console.log("fetchAndSaveTracks 호출 후");
-        router.push("/top5");
+        router.push("/topSongs");
       } catch (error) {
         console.error("트랙 데이터 가져오기 실패:", error);
         // 에러 처리 로직 (예: 사용자에게 알림)

@@ -2,7 +2,7 @@
 
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Heading } from "../../ui/text";
+import { Heading } from "../../ui/Text";
 import { fetchAndSaveTracks } from "../../utils/spotifyApi";
 import { useEffect } from "react";
 
@@ -18,13 +18,13 @@ function SpotifyLoginButton() {
 
   const handleSpotifyLogin = async () => {
     if (status === "unauthenticated") {
-      await signIn("spotify", { callbackUrl: "/top5" });
+      await signIn("spotify", { callbackUrl: "/topSongs" });
     } else if (status === "authenticated" && session?.accessToken) {
       try {
         console.log("fetchAndSaveTracks 호출 전");
         await fetchAndSaveTracks();
         console.log("fetchAndSaveTracks 호출 후");
-        router.push("/top5");
+        router.push("/topSongs");
       } catch (error) {
         console.error("트랙 데이터 가져오기 실패:", error);
         if (error.message.includes("The access token expired")) {
@@ -34,7 +34,7 @@ function SpotifyLoginButton() {
       }
     }
   };
-  
+
   return (
     <div onClick={handleSpotifyLogin}>
       <Heading
