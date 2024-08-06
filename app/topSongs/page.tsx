@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import styles from "./Top.module.css";
 
 interface Track {
@@ -25,30 +24,36 @@ const features = ["tempo", "speechiness", "valence", "acousticness"];
 
 function getColorForFeature(feature: string): string {
   const colors: Record<string, string> = {
-    tempo: "#7a5ad4", // 채도를 낮춘 보라색
-    speechiness: "#1a9d48", // 채도를 낮춘 초록색
-    valence: "#e65c5c", // 채도를 낮춘 빨간색
-    acousticness: "#3f7ec2", // 채도를 낮춘 파란색
+    tempo: "#7a5ad4",
+    speechiness: "#1a9d48",
+    valence: "#e65c5c",
+    acousticness: "#3f7ec2",
   };
   return colors[feature] || "#000000";
 }
 
-export default function TopSongs() {
+const TopSongs: React.FC = () => {
   const { data: session, status } = useSession();
   const [topTracks, setTopTracks] = useState<
     Record<string, { highest: Track; lowest: Track }>
   >({});
-  const router = useRouter();
 
   useEffect(() => {
-    if (status === "authenticated" && Object.keys(topTracks).length === 0) {
-      fetchTopTracks();
+    if (status === "authenticated" && session?.accessToken) {
+      fetchTopTracks(session.accessToken);
     }
-  }, [status, topTracks]);
+  }, [status, session]);
 
-  const fetchTopTracks = async () => {
+  const fetchTopTracks = async (accessToken: string) => {
     try {
-      const response = await fetch("/api/getTopTracks");
+      const response = await fetch("/api/getExtremeTracks", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
       setTopTracks(data);
     } catch (error) {
@@ -56,18 +61,12 @@ export default function TopSongs() {
     }
   };
 
-  const handleTrackClick = (trackId: string, feature: string) => {
-    router.push(`/swipe?feature=${feature}&trackId=${trackId}`);
-  };
-
   if (status === "loading") {
-    return <div className={styles.loading}>Loading...</div>;
+    return <div>Loading...</div>;
   }
 
   if (status === "unauthenticated") {
-    return (
-      <div className={styles.error}>Please sign in to view your top tracks</div>
-    );
+    return <div>Please sign in to view your top tracks</div>;
   }
 
   return (
@@ -75,54 +74,29 @@ export default function TopSongs() {
       <h1 className={styles.title}>Your Top Tracks</h1>
       {features.map((feature) => (
         <div key={feature} className={styles.featureSection}>
-          <h2 className={styles.featureTitle}>
-            {feature.charAt(0).toUpperCase() + feature.slice(1)}
-          </h2>
+          <h2 className={styles.featureTitle}>{feature}</h2>
           <div className={styles.boxContainer}>
             {["highest", "lowest"].map((extreme) => (
               <div
-                key={extreme}
-                className={styles.trackContainer}
-                onClick={() =>
-                  handleTrackClick(
-                    topTracks[feature]?.[extreme as "highest" | "lowest"].id,
-                    feature
-                  )
-                }
+                key={`${feature}-${extreme}`}
+                className={styles.featureBox}
                 style={{ backgroundColor: getColorForFeature(feature) }}
               >
                 <h3>{extreme.charAt(0).toUpperCase() + extreme.slice(1)}</h3>
-                <div className={styles.trackContent}>
-                  <div className={styles.albumCover}>
-                    <Image
-                      src={
-                        topTracks[feature]?.[extreme as "highest" | "lowest"]
-                          ?.album.images[0]?.url ||
-                        "https://via.placeholder.com/60"
-                      }
-                      alt={`${extreme} ${feature}`}
-                      width={60}
-                      height={60}
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = "https://via.placeholder.com/60";
-                      }}
-                    />
-                  </div>
-                  <div className={styles.trackInfo}>
-                    <div className={styles.trackName}>
-                      {
-                        topTracks[feature]?.[extreme as "highest" | "lowest"]
-                          .name
-                      }
-                    </div>
-                    <div className={styles.artistName}>
-                      {
-                        topTracks[feature]?.[extreme as "highest" | "lowest"]
-                          .artists[0].name
-                      }
-                    </div>
-                  </div>
+                <div className={styles.albumCover}>
+                  <Image
+                    src={
+                      topTracks[feature]?.[extreme as "highest" | "lowest"]
+                        ?.album?.images[0]?.url || "/404.jpg"
+                    }
+                    alt={`${extreme} ${feature}`}
+                    width={80}
+                    height={80}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = "/404.jpg";
+                    }}
+                  />
                 </div>
               </div>
             ))}
@@ -131,4 +105,6 @@ export default function TopSongs() {
       ))}
     </div>
   );
-}
+};
+
+export default TopSongs;

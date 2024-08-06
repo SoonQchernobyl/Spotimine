@@ -24,8 +24,7 @@ export default function RootLayout({
             <Image
               src="/status_bar.svg"
               alt="status bar"
-              width={100}
-              height={100}
+              fill={true}
               style={{ objectFit: "cover" }}
             />
           </div>

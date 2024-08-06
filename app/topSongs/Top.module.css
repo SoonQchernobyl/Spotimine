@@ -1,82 +1,52 @@
-.container {
-  background-color: #121212;
-  color: white;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-}
-
-.title {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-.featureSection {
-  margin-bottom: 30px;
-}
-
-.featureTitle {
-  font-size: 20px;
-  margin-top: 30px;
-  margin-bottom: 15px;
-}
-
 .boxContainer {
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
+  gap: 10px;
 }
-
-.trackContainer {
-  cursor: pointer;
-  transition: transform 0.3s ease;
+.featureBox {
+  position: relative;
   width: 48%;
-  margin-bottom: 20px;
-}
-
-.trackContainer:hover {
-  transform: scale(1.05);
-}
-
-.trackContent {
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  padding: 10px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .albumCover {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
   width: 60px;
   height: 60px;
-  margin-right: 15px;
+  border-radius: 5px;
   overflow: hidden;
-  border-radius: 4px;
+  transform: rotate(45deg);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.albumCover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: rotate(-45deg) scale(1.4);
 }
 
 .trackInfo {
-  flex-grow: 1;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 70px;
+  overflow: hidden;
 }
-
 .trackName {
   font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 2px;
 }
 
 .artistName {
-  font-size: 14px;
-  color: #b3b3b3;
-}
-
-.loading, .error {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-size: 18px;
-}
-
-@media (max-width: 600px) {
-  .boxContainer {
-    flex-direction: column;
-  }
-
-  .trackContainer {
-    width: 100%;
-  }
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
 }

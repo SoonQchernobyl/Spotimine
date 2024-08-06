@@ -1,0 +1,117 @@
+.container {
+  background-color: #121212;
+  color: white;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.featureSection {
+  margin-bottom: 30px;
+}
+
+.featureTitle {
+  font-size: 20px;
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+.boxContainer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.trackContainer {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  width: 48%;
+  margin-bottom: 20px;
+}
+
+.trackContainer:hover {
+  transform: scale(1.05);
+}
+
+.trackContent {
+  display: flex;
+  align-items: center;
+}
+
+.albumCover {
+  width: 60px;
+  height: 60px;
+  margin-right: 15px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.trackInfo {
+  flex-grow: 1;
+}
+
+.trackName {
+  font-weight: bold;
+}
+
+.artistName {
+  font-size: 14px;
+  color: #b3b3b3;
+}
+
+.loading,
+.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 18px;
+}
+
+@media (max-width: 600px) {
+  .boxContainer {
+    flex-direction: column;
+  }
+
+  .trackContainer {
+    width: 100%;
+  }
+}
+
+.featureBox {
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  transition: transform 0.2s;
+}
+
+.featureBox:hover {
+  transform: scale(1.05);
+}
+
+.albumCover {
+  width: 60px;
+  height: 60px;
+  overflow: hidden;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.trackInfo {
+  margin-top: 10px;
+}
+
+.trackName {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.artistName {
+  font-size: 14px;
+  color: #b3b3b3;
+}

@@ -1,6 +1,6 @@
-import React from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import React from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface FeatureBoxProps {
   albumCoverUrl: string;
@@ -10,7 +10,13 @@ interface FeatureBoxProps {
   isHighest: boolean;
 }
 
-const FeatureBox: React.FC<FeatureBoxProps> = ({ albumCoverUrl, backgroundColor, trackId, feature, isHighest }) => {
+const FeatureBox: React.FC<FeatureBoxProps> = ({
+  albumCoverUrl,
+  backgroundColor,
+  trackId,
+  feature,
+  isHighest,
+}) => {
   const router = useRouter();
 
   const handleClick = () => {
@@ -18,20 +24,20 @@ const FeatureBox: React.FC<FeatureBoxProps> = ({ albumCoverUrl, backgroundColor,
   };
 
   return (
-    <div 
-      className="feature-box" 
+    <div
+      className="feature-box"
       style={{ backgroundColor }}
       onClick={handleClick}
     >
-      <h3>{isHighest ? 'Highest' : 'Lowest'}</h3>
+      <h3>{isHighest ? "Highest" : "Lowest"}</h3>
       <div className="album-cover">
-        <Image 
-          src={albumCoverUrl || '/placeholder-album.png'} 
-          alt={`${isHighest ? 'Highest' : 'Lowest'} ${feature}`} 
-          width={60} 
-          height={60} 
+        <Image
+          src={albumCoverUrl || "/404.jpg"}
+          alt={`${isHighest ? "Highest" : "Lowest"} ${feature}`}
+          width={60}
+          height={60}
           onError={(e) => {
-            e.currentTarget.src = '/placeholder-album.png';
+            e.currentTarget.src = "/404.jpg";
           }}
         />
       </div>

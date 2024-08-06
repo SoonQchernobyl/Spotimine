@@ -108,6 +108,7 @@ export async function fetchAndSaveTracks() {
     const tracksWithAudioFeatures = allTracks.map((track, index) => ({
       ...track,
       audio_features: audioFeatures[index] || null,
+      added_at: track.added_at, // added_at 정보 포함
     }));
 
     // 서버에 데이터 저장
@@ -143,4 +144,20 @@ export async function fetchAndSaveTracks() {
     }
     throw error;
   }
+}
+export async function getAlbumCoverUrl(trackId: string, accessToken: string) {
+  if (!accessToken) throw new Error("No access token provided");
+
+  const response = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch track info: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.album.images[0]?.url || null;
 }
