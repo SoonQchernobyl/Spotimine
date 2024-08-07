@@ -2,7 +2,7 @@
 
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Heading } from "../../ui/Text";
+import { Heading } from "../ui/Text";
 import { fetchAndSaveTracks } from "../../utils/spotifyApi";
 import { useEffect } from "react";
 

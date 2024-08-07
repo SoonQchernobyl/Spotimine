@@ -2,7 +2,7 @@
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../api/auth/[...nextauth]/route";
-import StreamComponent from "./StreamComponent";
+import StreamComponent from "../../components/stream/StreamComponent";
 
 export default async function StreamPage({ searchParams }) {
   const session = await getServerSession(authOptions);

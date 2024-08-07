@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import Button from "../ui/Button";
-import { Heading } from "../ui/Text";
-import SpotifyLoginButton from "./api/spotifyLogin";
+import Button from "../components/ui/Button";
+import { Heading } from "../components/ui/Text";
+import SpotifyLoginButton from "../components/auth/spotifyLogin";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";

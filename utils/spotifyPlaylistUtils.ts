@@ -50,26 +50,47 @@ export async function createPlaylist(trackIds: string[], playlistName: string) {
 
   return playlist;
 }
-
 export async function getTopTracksForFeature(
   feature: string,
   limit: number = 20,
   selectedTrackId?: string
 ) {
-  console.log(
-    `Getting top tracks for feature: ${feature}, limit: ${limit}, selectedTrackId: ${selectedTrackId}`
+  const session = await getSession();
+  if (!session?.accessToken) throw new Error("No access token");
+
+  const response = await fetch(
+    `/api/getExtremeTracks?feature=${feature}&limit=${limit}`,
+    {
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+    }
   );
 
-  // API를 통해 DB에서 트랙 가져오기
-  const response = await fetch(
-    `/api/getTopTracks?feature=${feature}&limit=${limit}`
-  );
+  if (!response.ok) {
+    throw new Error(
+      `API request failed: ${response.status} ${response.statusText}`
+    );
+  }
+
   const data = await response.json();
   console.log("Tracks from DB:", data);
 
   let tracks = [];
   if (data[feature]) {
     tracks = [data[feature].highest, data[feature].lowest];
+  }
+
+  // 나머지 20개의 트랙을 Spotify API에서 가져오기
+  const remainingTracksCount = limit - tracks.length;
+  if (remainingTracksCount > 0) {
+    const spotifyTracks = await fetchWebApi(
+      `v1/recommendations?limit=${remainingTracksCount}&seed_tracks=${tracks
+        .map((t) => t.id)
+        .join(",")}`,
+      "GET"
+    );
+    tracks = [...tracks, ...spotifyTracks.tracks];
   }
 
   // 선택된 트랙이 있으면 추가

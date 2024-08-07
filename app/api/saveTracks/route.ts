@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/route";
-
-const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   console.log("POST 요청 받음: /api/saveTracks");
@@ -81,12 +79,12 @@ export async function POST(request: Request) {
             },
           },
           update: {
-            addedAt: new Date(track.added_at), // 트랙의 added_at 정보로 업데이트
+            addedAt: new Date(track.added_at),
           },
           create: {
             userId: user.id,
             trackId: savedTrack.id,
-            addedAt: new Date(track.added_at), // 트랙의 added_at 정보로 생성
+            addedAt: new Date(track.added_at),
           },
         });
 

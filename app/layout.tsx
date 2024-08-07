@@ -1,8 +1,8 @@
-import AuthProvider from "./authprovider";
-import NavigationBarWrapper from "../ui/NavigationBarWrapper";
+import AuthProvider from "../components/providers/authprovider";
+import NavigationBarWrapper from "../components/layout/NavigationBarWrapper";
 import { SwipeProvider } from "../utils/SwipeContext";
 import Image from "next/image";
-import "./globals.css";
+import "../styles/globals.css";
 
 export default function RootLayout({
   children,

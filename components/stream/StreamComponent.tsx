@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import styles from "./styles.module.css";
+import styles from "./stream.module.css";
 import {
   getTopTracksForFeature,
   createPlaylist,
@@ -22,7 +22,6 @@ export default function StreamComponent({
   useEffect(() => {
     createSpotifyPlaylist();
   }, [selectedFeature, trackId]);
-
   const createSpotifyPlaylist = async () => {
     setIsCreatingPlaylist(true);
     setError(null);
@@ -36,6 +35,7 @@ export default function StreamComponent({
         20,
         trackId
       );
+      console.log("Top tracks:", topTracks);
       setPlaylistTracks(topTracks);
 
       const playlistName = `Top 20 ${
@@ -45,6 +45,7 @@ export default function StreamComponent({
         topTracks.map((t) => t.id),
         playlistName
       );
+      console.log("Created playlist:", newPlaylist);
       setPlaylist(newPlaylist);
     } catch (error) {
       console.error("Error creating Spotify playlist:", error);

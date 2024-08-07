@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import styles from "./FeatureBox.module.css";
 
 interface FeatureBoxProps {
   albumCoverUrl: string;
@@ -20,17 +21,17 @@ const FeatureBox: React.FC<FeatureBoxProps> = ({
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/swipe?feature=${feature}&trackId=${trackId}`);
+    router.push(`/stream?feature=${feature}&trackId=${trackId}`);
   };
 
   return (
     <div
-      className="feature-box"
+      className={styles.featureBox}
       style={{ backgroundColor }}
       onClick={handleClick}
     >
       <h3>{isHighest ? "Highest" : "Lowest"}</h3>
-      <div className="album-cover">
+      <div className={styles.albumCover}>
         <Image
           src={albumCoverUrl || "/404.jpg"}
           alt={`${isHighest ? "Highest" : "Lowest"} ${feature}`}
@@ -41,27 +42,6 @@ const FeatureBox: React.FC<FeatureBoxProps> = ({
           }}
         />
       </div>
-      <style jsx>{`
-        .feature-box {
-          width: 150px;
-          height: 150px;
-          padding: 10px;
-          border-radius: 10px;
-          position: relative;
-          cursor: pointer;
-          margin: 10px;
-        }
-        h3 {
-          color: white;
-          margin: 0;
-        }
-        .album-cover {
-          position: absolute;
-          bottom: 10px;
-          right: 10px;
-          transform: rotate(15deg);
-        }
-      `}</style>
     </div>
   );
 };

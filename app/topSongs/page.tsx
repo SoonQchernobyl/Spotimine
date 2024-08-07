@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
-import styles from "./Top.module.css";
+import FeatureBox from "../../components/topSongs/FeatureBox";
+import styles from "../../components/topSongs/Top.module.css";
 
 interface Track {
   id: string;
@@ -34,9 +34,7 @@ function getColorForFeature(feature: string): string {
 
 const TopSongs: React.FC = () => {
   const { data: session, status } = useSession();
-  const [topTracks, setTopTracks] = useState<
-    Record<string, { highest: Track; lowest: Track }>
-  >({});
+  const [topTracks, setTopTracks] = useState<Record<string, TopTracks>>({});
 
   useEffect(() => {
     if (status === "authenticated" && session?.accessToken) {
@@ -77,28 +75,20 @@ const TopSongs: React.FC = () => {
           <h2 className={styles.featureTitle}>{feature}</h2>
           <div className={styles.boxContainer}>
             {["highest", "lowest"].map((extreme) => (
-              <div
+              <FeatureBox
                 key={`${feature}-${extreme}`}
-                className={styles.featureBox}
-                style={{ backgroundColor: getColorForFeature(feature) }}
-              >
-                <h3>{extreme.charAt(0).toUpperCase() + extreme.slice(1)}</h3>
-                <div className={styles.albumCover}>
-                  <Image
-                    src={
-                      topTracks[feature]?.[extreme as "highest" | "lowest"]
-                        ?.album?.images[0]?.url || "/404.jpg"
-                    }
-                    alt={`${extreme} ${feature}`}
-                    width={80}
-                    height={80}
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = "/404.jpg";
-                    }}
-                  />
-                </div>
-              </div>
+                albumCoverUrl={
+                  topTracks[feature]?.[extreme as "highest" | "lowest"]?.album
+                    ?.images[0]?.url || "/404.jpg"
+                }
+                backgroundColor={getColorForFeature(feature)}
+                trackId={
+                  topTracks[feature]?.[extreme as "highest" | "lowest"]?.id ||
+                  ""
+                }
+                feature={feature}
+                isHighest={extreme === "highest"}
+              />
             ))}
           </div>
         </div>

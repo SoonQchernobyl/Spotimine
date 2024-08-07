@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import { getAlbumCoverUrl } from "@/utils/spotifyApi";
-
-const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   const accessToken = request.headers.get("Authorization")?.split(" ")[1];
