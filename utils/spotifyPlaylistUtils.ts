@@ -50,6 +50,11 @@ export async function createPlaylist(trackIds: string[], playlistName: string) {
 
   return playlist;
 }
+
+export function generateTemporaryPlaylistId() {
+  return "temp_" + Math.random().toString(36).substr(2, 9);
+}
+
 export async function getTopTracksForFeature(
   feature: string,
   limit: number = 20,
@@ -110,5 +115,53 @@ export async function getTopTracksForFeature(
     .slice(0, limit);
 
   console.log("Final tracks list:", uniqueTracks);
-  return uniqueTracks;
+  return uniqueTracks.map((track) => track.id);
+}
+
+export async function createTemporaryPlaylist(
+  trackIds: string[],
+  playlistName: string
+) {
+  const { id: user_id } = await fetchWebApi("v1/me", "GET");
+
+  // 임시 플레이리스트 생성 (비공개로 설정)
+  const playlist = await fetchWebApi(`v1/users/${user_id}/playlists`, "POST", {
+    name: playlistName,
+    description: "Temporary playlist created by your app",
+    public: false,
+  });
+
+  if (playlist.id) {
+    await fetchWebApi(`v1/playlists/${playlist.id}/tracks`, "POST", {
+      uris: trackIds.map((id) => `spotify:track:${id}`),
+    });
+  }
+
+  return playlist;
+}
+export async function savePlaylistToSpotify(playlist) {
+  const { id: user_id } = await fetchWebApi("v1/me", "GET");
+
+  // 기존 플레이리스트를 복사하여 새로운 플레이리스트로 저장
+  const savedPlaylist = await fetchWebApi(
+    `v1/users/${user_id}/playlists`,
+    "POST",
+    {
+      name: playlist.name,
+      description: "Playlist created based on audio features",
+      public: false,
+    }
+  );
+
+  if (savedPlaylist.id) {
+    const tracks = await fetchWebApi(
+      `v1/playlists/${playlist.id}/tracks`,
+      "GET"
+    );
+    await fetchWebApi(`v1/playlists/${savedPlaylist.id}/tracks`, "POST", {
+      uris: tracks.items.map((item) => item.track.uri),
+    });
+  }
+
+  return savedPlaylist;
 }

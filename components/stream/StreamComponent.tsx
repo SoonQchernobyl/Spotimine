@@ -1,10 +1,13 @@
+// StreamComponent.tsx
+
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import styles from "./stream.module.css";
 import {
   getTopTracksForFeature,
-  createPlaylist,
+  createTemporaryPlaylist,
+  savePlaylistToSpotify,
 } from "../../utils/spotifyPlaylistUtils";
 
 const validFeatures = ["tempo", "speechiness", "valence", "acousticness"];
@@ -14,15 +17,12 @@ export default function StreamComponent({
   trackId,
   selectedFeature = "tempo",
 }) {
-  const [playlist, setPlaylist] = useState(null);
-  const [playlistTracks, setPlaylistTracks] = useState([]);
+  const [playlistId, setPlaylistId] = useState(null);
   const [isCreatingPlaylist, setIsCreatingPlaylist] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSaved, setIsSaved] = useState(false);
 
-  useEffect(() => {
-    createSpotifyPlaylist();
-  }, [selectedFeature, trackId]);
-  const createSpotifyPlaylist = async () => {
+  const createSpotifyPlaylist = useCallback(async () => {
     setIsCreatingPlaylist(true);
     setError(null);
     try {
@@ -30,28 +30,41 @@ export default function StreamComponent({
         throw new Error(`Invalid feature: ${selectedFeature}`);
       }
 
-      const topTracks = await getTopTracksForFeature(
+      const topTrackIds = await getTopTracksForFeature(
         selectedFeature,
         20,
         trackId
       );
-      console.log("Top tracks:", topTracks);
-      setPlaylistTracks(topTracks);
 
       const playlistName = `Top 20 ${
         selectedFeature.charAt(0).toUpperCase() + selectedFeature.slice(1)
       } Tracks`;
-      const newPlaylist = await createPlaylist(
-        topTracks.map((t) => t.id),
+
+      const newPlaylist = await createTemporaryPlaylist(
+        topTrackIds,
         playlistName
       );
-      console.log("Created playlist:", newPlaylist);
-      setPlaylist(newPlaylist);
+      setPlaylistId(newPlaylist.id);
     } catch (error) {
-      console.error("Error creating Spotify playlist:", error);
-      setError(error.message || "Failed to create Spotify playlist");
+      console.error("Error creating temporary playlist:", error);
+      setError(error.message || "Failed to create temporary playlist");
     } finally {
       setIsCreatingPlaylist(false);
+    }
+  }, [selectedFeature, trackId]);
+
+  useEffect(() => {
+    createSpotifyPlaylist();
+  }, [createSpotifyPlaylist]);
+
+  const handleSavePlaylist = async () => {
+    try {
+      if (!playlistId) throw new Error("No playlist to save");
+      await savePlaylistToSpotify({ id: playlistId });
+      setIsSaved(true);
+    } catch (error) {
+      console.error("Error saving playlist:", error);
+      setError(error.message || "Failed to save playlist");
     }
   };
 
@@ -64,23 +77,32 @@ export default function StreamComponent({
         </p>
       </div>
       {isCreatingPlaylist ? (
-        <p>Creating Spotify playlist...</p>
+        <p className={styles.loading}>Creating temporary playlist...</p>
       ) : error ? (
         <p className={styles.error}>{error}</p>
-      ) : playlist ? (
-        <div>
-          <h2>{playlist.name}</h2>
-
+      ) : playlistId ? (
+        <div className={styles.playlistContainer}>
+          <h2
+            className={styles.playlistName}
+          >{`Top 20 ${selectedFeature} Tracks`}</h2>
           <iframe
-            title={`Spotify Embed: ${playlist.name}`}
-            src={`https://open.spotify.com/embed/playlist/${playlist.id}?utm_source=generator&theme=0`}
+            title={`Spotify Embed: Top 20 ${selectedFeature} Tracks`}
+            src={`https://open.spotify.com/embed/playlist/${playlistId}?utm_source=generator&theme=0`}
             width="100%"
-            height="380"
-            style={{ minHeight: "360px" }}
-            frameBorder="0"
+            height="100%"
+            style={{ border: "none" }}
             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
             loading="lazy"
+            className={styles.spotifyEmbed}
           />
+          {!isSaved && (
+            <button onClick={handleSavePlaylist} className={styles.saveButton}>
+              Save to Spotify
+            </button>
+          )}
+          {isSaved && (
+            <p className={styles.savedMessage}>Playlist saved to Spotify!</p>
+          )}
         </div>
       ) : null}
     </div>
