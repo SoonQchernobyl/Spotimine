@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import SpotifyPlayer from "react-spotify-web-playback";
 import { getTopTracksForFeature } from "../../utils/spotifyPlaylistUtils";
 import { useSwipe } from "../../utils/SwipeContext";
+import Image from "next/image";
 
 const SwipePage = () => {
   const { data: session } = useSession();
@@ -55,7 +56,12 @@ const SwipePage = () => {
             Rank: {state.tracks.indexOf(currentTrack) + 1} /{" "}
             {state.tracks.length}
           </p>
-          <img src={currentTrack.album.images[0].url} alt="Album artwork" />
+          <Image
+            src={currentTrack.album.images[0].url}
+            alt={currentTrack.name}
+            width={300}
+            height={300}
+          />
           <SpotifyPlayer
             token={session.accessToken}
             uris={[`spotify:track:${currentTrack.id}`]}
