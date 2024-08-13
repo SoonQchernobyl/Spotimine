@@ -42,7 +42,7 @@ async function refreshAccessToken(token) {
   }
 }
 
-const authOptions = {
+const handler = NextAuth({
   providers: [
     SpotifyProvider({
       clientId: process.env.SPOTIFY_CLIENT_ID,
@@ -75,8 +75,6 @@ const authOptions = {
       return session;
     },
   },
-};
-
-const handler = NextAuth(authOptions);
+});
 
 export { handler as GET, handler as POST };
