@@ -1,0 +1,75 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #121212;
+  color: white;
+}
+
+.trackInfo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.trackName {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.artistName {
+  font-size: 18px;
+  color: #b3b3b3;
+}
+
+.playlistButtons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.playlistButtons button {
+  padding: 10px 15px;
+  background-color: #1db954;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.playlistButtons button:hover {
+  background-color: #1ed760;
+}
+
+.playlistButtons button:disabled {
+  background-color: #535353;
+  cursor: not-allowed;
+}
+
+.spotifyEmbed {
+  width: 100%;
+  height: 380px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 380px;
+  font-size: 18px;
+}
+
+.trackList {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.trackList li {
+  margin-bottom: 10px;
+  font-size: 14px;
+}

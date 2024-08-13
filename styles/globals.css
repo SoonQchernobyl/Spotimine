@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+body {
+  margin: 0;
+  padding: 0;
+  color: white;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+.app-container {
+  width: 428px;
+  height: 926px;
+  margin: 0 auto;
+  background-color: #121212;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* 스크롤바 스타일링 (선택적) */
+.app-container::-webkit-scrollbar {
+  width: 0px;
+}
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.navigation-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #282828;
+  padding: 10px 0;
+}
+
+.navigation-bar a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #b3b3b3;
+  text-decoration: none;
+}
+
+.navigation-bar a.active {
+  color: #1db954;
+}
+
+.navigation-bar svg {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 4px;
+}
+
+.navigation-bar span {
+  font-size: 12px;
+}
