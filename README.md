@@ -34,3 +34,12 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=wlejtnkjsdbgkzsjbdglkjweoij
+SPOTIFY_CLIENT_ID=b4d5a828aa244d918df49a00becae370
+SPOTIFY_CLIENT_SECRET=6b8c812d9fba4b1fb83f83f47b747bbf
+# # Prisma database connection
+DATABASE_URL="postgresql://postgres:4680074@localhost:5432/spotimine?schema=public"
+
+
