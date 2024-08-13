@@ -55,7 +55,7 @@ export default function StreamComponent({
 
   useEffect(() => {
     createSpotifyPlaylist();
-  }, [createSpotifyPlaylist]);
+  }, [createSpotifyPlaylist, selectedFeature]); // selectedFeature 추가
 
   const handleSavePlaylist = async () => {
     try {
