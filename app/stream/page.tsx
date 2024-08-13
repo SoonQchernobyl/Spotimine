@@ -1,11 +1,8 @@
+// /app/stream/page.tsx
+
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../api/auth/[...nextauth]/route";
-import dynamic from "next/dynamic";
-
-const StreamComponent = dynamic(
-  () => import("../../components/stream/StreamComponent"),
-  { ssr: false }
-);
+import StreamComponent from "../../components/stream/StreamComponent";
 
 export default async function StreamPage({ searchParams }) {
   const session = await getServerSession(authOptions);

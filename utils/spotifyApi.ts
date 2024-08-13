@@ -161,5 +161,3 @@ export async function getAlbumCoverUrl(trackId: string, accessToken: string) {
   const data = await response.json();
   return data.album.images[0]?.url || null;
 }
-
-
