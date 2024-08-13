@@ -59,9 +59,7 @@ export default function StreamComponent({
     <div className={styles.container}>
       <div className={styles.trackInfo}>
         <h1 className={styles.trackName}>{initialTrackData.name}</h1>
-        <p className={styles.artistName}>
-          {initialTrackData.artists.map((artist) => artist.name).join(", ")}
-        </p>
+        <p className={styles.artistName}></p>
       </div>
       {isCreatingPlaylist ? (
         <p>Creating Spotify playlist...</p>
