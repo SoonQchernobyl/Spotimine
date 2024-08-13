@@ -1,10 +1,13 @@
-// /app/stream/page.tsx
-
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import StreamComponent from "../../components/stream/StreamComponent";
 
-export default async function StreamPage({ searchParams }) {
+interface SearchParams {
+  trackId?: string;
+  feature?: string;
+}
+
+export default async function StreamPage({ searchParams }: { searchParams: SearchParams }) {
   const session = await getServerSession(authOptions);
   const trackId = searchParams.trackId;
   const selectedFeature = searchParams.feature || "tempo";

@@ -1,9 +1,9 @@
-import NextAuth from "next-auth";
+import NextAuth, { DefaultSession, JWT } from "next-auth";
 import SpotifyProvider from "next-auth/providers/spotify";
 
 const SPOTIFY_REFRESH_TOKEN_URL = "https://accounts.spotify.com/api/token";
 
-async function refreshAccessToken(token) {
+async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
     const basicAuth = Buffer.from(
       `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
@@ -17,7 +17,7 @@ async function refreshAccessToken(token) {
       },
       body: new URLSearchParams({
         grant_type: "refresh_token",
-        refresh_token: token.refreshToken,
+        refresh_token: token.refreshToken as string,
       }),
     });
 
@@ -42,11 +42,11 @@ async function refreshAccessToken(token) {
   }
 }
 
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     SpotifyProvider({
-      clientId: process.env.SPOTIFY_CLIENT_ID,
-      clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+      clientId: process.env.SPOTIFY_CLIENT_ID as string,
+      clientSecret: process.env.SPOTIFY_CLIENT_SECRET as string,
       authorization: {
         params: {
           scope:
@@ -56,7 +56,7 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, account }) {
+    async jwt({ token, account }: { token: JWT; account: any }) {
       if (account) {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
@@ -69,12 +69,14 @@ const handler = NextAuth({
 
       return refreshAccessToken(token);
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: DefaultSession; token: JWT }) {
       session.accessToken = token.accessToken;
       session.error = token.error;
       return session;
     },
   },
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
