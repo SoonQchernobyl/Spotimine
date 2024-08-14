@@ -1,45 +1,103 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Spotimine: Personalized Spotify Playlist Generator
 
-## Getting Started
+Spotimine is a Next.js application that leverages the Spotify API to create personalized playlists based on users' listening habits and preferences. This project uses TypeScript, PostgreSQL, and integrates with Spotify's authentication and data retrieval systems.
 
-First, run the development server:
+## Table of Contents
+1. [Project Structure](#project-structure)
+2. [Features](#features)
+3. [Setup](#setup)
+4. [Pages](#pages)
+5. [API Routes](#api-routes)
+6. [Components](#components)
+7. [Database](#database)
+8. [Authentication](#authentication)
+9. [Styling](#styling)
+10. [Deployment](#deployment)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Project Structure
+
+The project follows a typical Next.js structure with additional directories for components, utilities, and API routes:
+
+```
+spotimine/
+├── .next/               # Next.js build output
+├── app/                 # Next.js 13+ app directory
+│   ├── api/             # API routes
+│   ├── stream/          # Stream page
+│   ├── swipe/           # Swipe page
+│   ├── topSongs/        # Top Songs page
+│   ├── layout.tsx       # Root layout
+│   └── page.tsx         # Home page
+├── components/          # Reusable React components
+├── lib/                 # Library code, including Prisma client
+├── prisma/              # Prisma ORM configuration and migrations
+├── public/              # Static assets
+├── styles/              # Global styles
+├── utils/               # Utility functions
+├── .env                 # Environment variables
+├── next.config.mjs      # Next.js configuration
+├── package.json         # Project dependencies and scripts
+├── postcss.config.mjs   # PostCSS configuration
+├── tailwind.config.ts   # Tailwind CSS configuration
+└── tsconfig.json        # TypeScript configuration
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Spotify Authentication
+2. Top Songs Analysis
+3. Personalized Playlist Generation
+4. Stream Page for Playlist Playback
+5. Swipe Interface for Song Discovery
+6. Responsive Design with Mobile-First Approach
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Setup
 
-## Learn More
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Set up environment variables in `.env.local`
+4. Run the development server: `npm run dev`
 
-To learn more about Next.js, take a look at the following resources:
+## Pages
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Home (`/app/page.tsx`)**: Landing page with Spotify login
+2. **Top Songs (`/app/topSongs/page.tsx`)**: Displays user's top tracks and features
+3. **Stream (`/app/stream/page.tsx`)**: Playlist playback and lyrics display
+4. **Swipe (`/app/swipe/page.tsx`)**: Swipe interface for discovering new tracks
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## API Routes
 
-## Deploy on Vercel
+1. **Authentication (`/app/api/auth/[...nextauth]/route.ts`)**: Handles Spotify OAuth
+2. **Get Extreme Tracks (`/app/api/getExtremeTracks/route.ts`)**: Fetches tracks based on audio features
+3. **Save Tracks (`/app/api/saveTracks/route.ts`)**: Saves generated playlist to user's Spotify account
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Components
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- **Auth**: `SpotifyLogin.tsx`
+- **Layout**: `NavigationBar.tsx`, `NavigationBarWrapper.tsx`
+- **Providers**: `AuthProvider.tsx`
+- **Stream**: `StreamComponent.tsx`
+- **Top Songs**: `FeatureBox.tsx`
+- **UI**: `Button.tsx`, `Text.tsx`
 
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=wlejtnkjsdbgkzsjbdglkjweoij
-SPOTIFY_CLIENT_ID=b4d5a828aa244d918df49a00becae370
-SPOTIFY_CLIENT_SECRET=6b8c812d9fba4b1fb83f83f47b747bbf
-# # Prisma database connection
-DATABASE_URL="postgresql://postgres:4680074@localhost:5432/spotimine?schema=public"
+## Database
 
+The project uses PostgreSQL with Prisma ORM. The schema is defined in `prisma/schema.prisma`.
 
+## Authentication
+
+Next-Auth is used for Spotify authentication. Configuration is in `/app/api/auth/[...nextauth]/route.ts`.
+
+## Styling
+
+The project uses a combination of Tailwind CSS and CSS Modules for styling. Global styles are in `styles/globals.css`.
+
+## Deployment
+
+The application is designed to be deployed on platforms like Vercel or Netlify that support Next.js applications.
+
+For detailed deployment instructions, refer to the Next.js deployment documentation.
+
+---
+
+This README provides an overview of the Spotimine project. For more detailed information on specific components or features, please refer to the inline documentation within the codebase.
